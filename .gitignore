@@ -1,0 +1,34 @@
+
+# Virtual environment folders
+.venv/
+venv/
+env/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE / editor settings
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Credentials & Config
+.env
+service_account.json
+
+# Data files
+data/*.csv
+data/*.xlsx
+*.csv
+*.xlsx
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# Google credentials / tokens
+token.json
