@@ -1,0 +1,18 @@
+{
+  "timestamp_utc": "2025-10-27T11:21:23.138986Z",
+  "selection": {
+    "youtube": "search, top decile by commentCount, ≤2 videos",
+    "reddit": "top(month) across subs, top quartile by score, ≤2 posts"
+  },
+  "caps": {
+    "max_comments_per_post": 300,
+    "max_posts_per_source": 2
+  },
+  "filters": {
+    "window_days": 60,
+    "lang_en_ascii_ratio": ">0.95",
+    "toxicity_max": 0.3,
+    "ed_min": 0.2,
+    "must_have": "≥1 marketing signal OR hashtag"
+  }
+}
