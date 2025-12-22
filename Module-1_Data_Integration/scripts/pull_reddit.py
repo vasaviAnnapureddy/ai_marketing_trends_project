@@ -2,8 +2,10 @@
 
 import os
 import warnings
+import json
 import datetime as dt
 import pandas as pd
+from pathlib import Path
 from dotenv import load_dotenv
 import praw
 from prawcore.exceptions import Forbidden, NotFound, TooManyRequests, RequestException, ResponseException
@@ -12,7 +14,8 @@ from prawcore.exceptions import Forbidden, NotFound, TooManyRequests, RequestExc
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 # Load .env from project root
-load_dotenv(os.path.join(os.getcwd(), ".env"))
+REPO_ENV = Path(__file__).resolve().parents[1] / ".env"
+load_dotenv(dotenv_path=REPO_ENV)
 
 # ---- Env & knobs
 CLIENT_ID  = os.getenv("REDDIT_CLIENT_ID")
@@ -50,7 +53,7 @@ SUBS = [
 KW = [
     "launch","announcement","preorder","drop",
     "discount","giveaway","brand","campaign","ad","promo",
-    "iphone","samsung","tesla","laptop","earbuds","smartwatch"
+    "iphone","samsung","tesla","laptop","earbuds","smartwatch", "android"
 ]
 
 def utc_now():
@@ -172,8 +175,18 @@ def collect_reddit_raw() -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 if __name__ == "__main__":
-    os.makedirs("data", exist_ok=True)
+    if __name__ == "__main__":
+        os.makedirs("data/raw", exist_ok=True)
     df = collect_reddit_raw()
-    out_path = "data/raw_reddit.csv"
-    df.to_csv(out_path, index=False)
-    print(f"Wrote {out_path} | rows = {len(df)}")
+    # save CSV and jsonl daily snapshot
+    out_csv = f"data/raw/raw_reddit_{dt.datetime.utcnow().strftime('%Y-%m-%dT%H%MZ')}.csv"
+    out_jsonl = f"data/raw/raw_reddit_{dt.datetime.utcnow().strftime('%Y-%m-%d')}.jsonl"
+    df.to_csv(out_csv, index=False)
+    # jsonl
+    with open(out_jsonl, "w", encoding="utf8") as fh:
+        for rec in df.to_dict(orient="records"):
+            fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
+    # also write a stable file used by pipeline
+    df.to_csv("data/raw_reddit.csv", index=False)
+    print(f"Wrote {out_csv} | rows = {len(df)}")
+

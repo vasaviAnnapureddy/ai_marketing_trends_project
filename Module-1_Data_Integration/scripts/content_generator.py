@@ -1,4 +1,3 @@
-# content_generator.py (simple variants generator)
 from sheets_utils import get_all_rows, write_rows
 
 IN_SHEET = "ALL_COMMENTS"
@@ -12,6 +11,11 @@ TEMPLATES = [
 ]
 
 def snippet(text, limit=120):
+    # ensure text is a string (avoid TypeError when text is float/None)
+    try:
+        text = "" if text is None else str(text)
+    except Exception:
+        text = ""
     return (text[:limit].strip() + "...") if len(text) > limit else text
 
 def main():

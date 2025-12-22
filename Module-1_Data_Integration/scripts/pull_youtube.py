@@ -1,31 +1,35 @@
 # scripts/pull_youtube.py
-import os, requests, datetime as dt, pandas as pd
+import os, requests, datetime as dt, pandas as pd, json
+from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
+REPO_ENV = Path(__file__).resolve().parents[1] / ".env"
+load_dotenv(dotenv_path=REPO_ENV)
 API_KEY = os.getenv("YOUTUBE_API_KEY")
 
 # ----- ENV (kept simple; matches your .env) -----
 REGIONS             = [r.strip().upper() for r in os.getenv("YT_REGIONS", "US,GB,CA,AU,IE").split(",") if r.strip()]
-TARGET_VIDEOS       = int(os.getenv("YT_MAX_VIDEOS", "80"))
+TARGET_VIDEOS       = int(os.getenv("YT_MAX_VIDEOS", "120"))
 COMMENTS_PER_VIDEO  = int(os.getenv("YT_COMMENTS_PER_VIDEO", "20"))
 POPULAR_MAX_PER_CAT = int(os.getenv("YT_POPULAR_MAX_PER_CAT", "80"))
-ONLY_ENGLISH        = os.getenv("YT_ONLY_ENGLISH", "1") in ("1","true","True","yes","YES")
+ONLY_ENGLISH        = os.getenv("YT_ONLY_ENGLISH", "0") in ("1","true","True","yes","YES")
 
 # Marketing search (comma-separated list; no inner quotes)
 SEARCH_KWS          = [k.strip() for k in os.getenv("YT_SEARCH_KEYWORDS", "").split(",") if k.strip()]
-SEARCH_MAX_VIDS_KW  = int(os.getenv("YT_SEARCH_MAX_VIDEOS_PER_KW", "8"))
-COMMENTS_PER_SEARCH = int(os.getenv("YT_COMMENTS_PER_SEARCH_VIDEO", "25"))
+SEARCH_MAX_VIDS_KW  = int(os.getenv("YT_SEARCH_MAX_VIDEOS_PER_KW", "20"))
+COMMENTS_PER_SEARCH = int(os.getenv("YT_COMMENTS_PER_SEARCH_VIDEO", "50"))
 
 BASE = "https://www.googleapis.com/youtube/v3"
 
 # Stable categories for mostPopular (avoid the ones that often 404)
 YTCATS = {
-    "music": 10,
-    "entertainment": 24,
-    "gaming": 20,
-    "news": 25,
-    "science_tech": 28,
+    "science_tech": 35,
+    "ai":20,
+    "openai":25,
+    "claude":20,
+    "gadgets":15,
+    "news": 20,
+    
 }
 
 # ---------------- helpers ----------------
@@ -243,8 +247,13 @@ def collect_youtube_raw():
 
 # ---------------- CLI ----------------
 if __name__ == "__main__":
-    os.makedirs("data", exist_ok=True)
+    os.makedirs("data/raw", exist_ok=True)
     df = collect_youtube_raw()
-    out = "data/raw_youtube.csv"
-    df.to_csv(out, index=False)
-    print("Wrote", out, "| rows=", len(df))
+    out_csv = f"data/raw/raw_youtube_{dt.datetime.utcnow().strftime('%Y-%m-%dT%H%MZ')}.csv"
+    out_jsonl = f"data/raw/raw_youtube_{dt.datetime.utcnow().strftime('%Y-%m-%d')}.jsonl"
+    df.to_csv(out_csv, index=False)
+    with open(out_jsonl, "w", encoding="utf8") as fh:
+        for rec in df.to_dict(orient="records"):
+            fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
+    df.to_csv("data/raw_youtube.csv", index=False)
+    print("Wrote", out_csv, "| rows=", len(df))
