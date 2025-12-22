@@ -1,3 +1,4 @@
+streamlit
 python-dotenv==1.0.1
 requests==2.32.3
 pandas==2.2.3
@@ -12,4 +13,4 @@ regex==2024.9.11
 scikit-learn==1.5.2          # for later weeks (TF-IDF, dedupe)
 spacy==3.7.5                 # for later weeks (NER)
 nltk==3.9.1                  # for later weeks
-streamlit
+plotly
