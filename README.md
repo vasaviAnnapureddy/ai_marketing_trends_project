@@ -24,11 +24,8 @@ It automates the process of collecting, analyzing, and optimizing marketing data
 - **Platforms:** Google Sheets API, YouTube Data API, Reddit API  
 - **Environment:** VS Code, GitHub  
 ---
-## ⚙️ How to Run Module-1
-1. Open terminal in VS Code  
-2. Run these commands:
-   ```bash
-   python -m venv .venv
-   .\.venv\Scripts\Activate.ps1
-   pip install -r Module-1_Data_Integration/requirements.txt
-   python -m Module-1_Data_Integration.scripts.run_once
+
+## 🚀 Live Demo (Streamlit App)
+👉 https://aimarketingtrendsproject-kjxvtyk2p6whtibw6iusty.streamlit.app/
+
+---
