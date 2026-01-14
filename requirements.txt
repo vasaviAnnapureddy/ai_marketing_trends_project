@@ -1,0 +1,15 @@
+streamlit
+pandas
+numpy
+plotly
+requests
+python-dotenv
+tqdm
+google-api-python-client
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+praw
+scikit-learn
+textblob
+vaderSentiment
